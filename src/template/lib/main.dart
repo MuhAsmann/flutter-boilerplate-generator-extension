@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:template/core/lang/my_translations.dart';
+import 'package:template/core/my_bindings.dart';
+import 'package:template/core/routers/pages.dart';
+import 'package:template/core/themes/my_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,13 +14,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return GetMaterialApp(
+      title: 'Flutter Generator Boilerplate',
+      themeMode: ThemeMode.system,
+      theme: MyTheme.lightMode,
+      darkTheme: MyTheme.darkMode,
+      locale: Get.locale,
+      initialBinding: MyBindings(),
+      translations: MyTranslations(),
+      initialRoute: Pages.initialRoute,
+      getPages: Pages.routes,
     );
   }
 }
