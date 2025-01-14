@@ -2,7 +2,7 @@
   "name": "flutter-generator-boilerplate",
   "displayName": "Flutter Generator Boilerplate",
   "description": " Flutter Generator Boilerplate",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -16,6 +16,10 @@
       {
         "command": "flutter-generator-boilerplate.createTemplate",
         "title": "Flutter Generator Boilerplate : Create Template"
+      },
+      {
+        "command": "flutter-generator-boilerplate.generatePattern",
+        "title": "Flutter Generator Boilerplate : Generate Pattern"
       }
     ]
   },

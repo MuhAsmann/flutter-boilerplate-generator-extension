@@ -1,4 +1,4 @@
-import { PubspecTemplate } from "./template/pubspec-template";
+import { PubspecTemplate } from "./contents/pubspec-template";
 
 export class Writer {
   static pubspecWriter(name: string) {

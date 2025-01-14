@@ -1,32 +1,25 @@
 import * as vscode from "vscode";
 import * as fs from "fs-extra";
 import * as path from "path";
-import { exec } from "child_process";
 import { Writer } from "../writer";
+import { getFolderName } from "../utils/folder_name_utils";
+import { execPromise } from "../utils/execute_promise";
 
 export function createTemplate() {
   return vscode.commands.registerCommand(
     "flutter-generator-boilerplate.createTemplate",
     async () => {
-      const folderName = await vscode.window.showInputBox(
-        {
-          placeHolder: "Masukkan nama folder",
-        }
-      );
-      if (!folderName) {
-        vscode.window.showErrorMessage("Masukkan nama folder");
-        return;
-      }
-      const extractFolderName = folderName?.replaceAll(" ", "_").toLowerCase();
-      let extensionPath : string | null = "" ;
+      const folderName = await getFolderName();
+      if (!folderName) return;
+
+      let extensionPath: string | null = "";
       if (process.env.ENVIRONMENT === "production") {
-        extensionPath = vscode.extensions.all.find((ext) =>
-          ext.extensionPath.includes("flutter-generator-boilerplate")
-        )?.extensionPath ?? null;
+        extensionPath =
+          vscode.extensions.all.find((ext) =>
+            ext.extensionPath.includes("flutter-generator-boilerplate")
+          )?.extensionPath ?? null;
       } else {
-        extensionPath = fs.realpathSync(
-          path.join(__dirname, "..", "..")
-        );
+        extensionPath = fs.realpathSync(path.join(__dirname, "..", ".."));
       }
 
       if (!extensionPath) {
@@ -62,7 +55,7 @@ export function createTemplate() {
       }
 
       try {
-        const userDirectory = path.join(sourceUri[0].fsPath, extractFolderName);
+        const userDirectory = path.join(sourceUri[0].fsPath, folderName);
         const folderExist = await fs.pathExists(userDirectory);
         if (folderExist) {
           vscode.window.showErrorMessage("Folder sudah ada, gunakan nama lain");
@@ -73,7 +66,7 @@ export function createTemplate() {
           userDirectory,
           pickPlatforms,
           templateDirectory,
-          extractFolderName
+          folderName
         );
       } catch (error) {
         vscode.window.showInformationMessage(`Gagal membuat template`);
@@ -99,18 +92,6 @@ function runFlutterCommand(
       cancellable: false,
     },
     async (progress) => {
-      const execPromise = (command: string) => {
-        return new Promise<void>((resolve, reject) => {
-          exec(command, (error, _, __) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve();
-            }
-          });
-        });
-      };
-
       return new Promise<void>(async (resolve, reject) => {
         try {
           await execPromise(command);
@@ -129,13 +110,17 @@ function runFlutterCommand(
           progress.report({
             message: "Menyalin pubspec.yaml sesuai template",
           });
-          await fs.writeFile(pubspecYaml, Writer.pubspecWriter(folderName)).catch(reject);
+          await fs
+            .writeFile(pubspecYaml, Writer.pubspecWriter(folderName))
+            .catch(reject);
 
           progress.report({ message: "Menjalankan Pubspec" });
-          await execPromise(`cd ${userDirectory} && flutter pub get`).catch(reject);
+          await execPromise(
+            `cd ${userDirectory} && code . --reuse-window && flutter pub get`
+          ).catch(reject);
 
           vscode.window.showInformationMessage(
-            "Template berhasil dibuat, selamat menggunakan✌️😊 "
+            "Template berhasil dibuat, selamat menggunakan✌️😊"
           );
 
           resolve();
