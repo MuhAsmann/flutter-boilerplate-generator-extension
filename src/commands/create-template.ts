@@ -6,7 +6,7 @@ import { Writer } from "../writer";
 
 export function createTemplate() {
   return vscode.commands.registerCommand(
-    "flutter-generator-boilerplate.leoGenerator",
+    "flutter-generator-boilerplate.createTemplate",
     async () => {
       const folderName = await vscode.window.showInputBox(
         {

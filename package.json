@@ -14,7 +14,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "flutter-generator-boilerplate.leoGenerator",
+        "command": "flutter-generator-boilerplate.createTemplate",
         "title": "Flutter Generator Boilerplate : Create Template"
       }
     ]
