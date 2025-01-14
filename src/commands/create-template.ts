@@ -8,15 +8,26 @@ export function createTemplate() {
   return vscode.commands.registerCommand(
     "flutter-generator-boilerplate.leoGenerator",
     async () => {
-      const folderName = await vscode.window.showInputBox();
+      const folderName = await vscode.window.showInputBox(
+        {
+          placeHolder: "Masukkan nama folder",
+        }
+      );
       if (!folderName) {
         vscode.window.showErrorMessage("Masukkan nama folder");
         return;
       }
       const extractFolderName = folderName?.replaceAll(" ", "_").toLowerCase();
-      const extensionPath = vscode.extensions.all.find((ext) =>
-        ext.extensionPath.includes("flutter-generator-boilerplate")
-      )?.extensionPath;
+      let extensionPath : string | null = "" ;
+      if (process.env.ENVIRONMENT === "production") {
+        extensionPath = vscode.extensions.all.find((ext) =>
+          ext.extensionPath.includes("flutter-generator-boilerplate")
+        )?.extensionPath ?? null;
+      } else {
+        extensionPath = fs.realpathSync(
+          path.join(__dirname, "..", "..")
+        );
+      }
 
       if (!extensionPath) {
         vscode.window.showErrorMessage("Tidak ada extensi yang dituju");
@@ -52,6 +63,11 @@ export function createTemplate() {
 
       try {
         const userDirectory = path.join(sourceUri[0].fsPath, extractFolderName);
+        const folderExist = await fs.pathExists(userDirectory);
+        if (folderExist) {
+          vscode.window.showErrorMessage("Folder sudah ada, gunakan nama lain");
+          return;
+        }
         await fs.mkdir(userDirectory);
         runFlutterCommand(
           userDirectory,
@@ -83,50 +99,52 @@ function runFlutterCommand(
       cancellable: false,
     },
     async (progress) => {
-      return new Promise<void>((resolve, reject) => {
-        exec(command, async (error, _, __) => {
-          if (error) {
-            vscode.window.showErrorMessage("Oops! Sepertinya ada kesalahan");
-            reject();
-          }
-
-          try {
-            const pubspecYaml = path.join(userDirectory, "pubspec.yaml");
-
-            progress.report({ message: "Membersihkan default folder" });
-            await fs.remove(path.join(userDirectory, "lib"));
-
-            progress.report({ message: "Menyalin template" });
-            await fs.copy(templateDirectory, userDirectory);
-
-            progress.report({ message: "Menghapus pubspec.yaml" });
-            await fs.remove(pubspecYaml);
-
-            progress.report({
-              message: "Menyalin pubspec.yaml sesuai template",
-            });
-            await fs.writeFile(pubspecYaml, Writer.pubspecWriter(folderName));
-          } catch (fileError) {
-            vscode.window.showErrorMessage(
-              "Operasi telah gagal karena sesuatu, silahkan mengulanginya"
-            );
-          }
+      const execPromise = (command: string) => {
+        return new Promise<void>((resolve, reject) => {
+          exec(command, (error, _, __) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve();
+            }
+          });
         });
+      };
 
-        progress.report({ message: "Menjalankan Pubspec" });
-        exec("flutter pub get", (error, _, __) => {
-          if (error) {
-            vscode.window.showErrorMessage(
-              "Gagal menjalankan pubspec, silahkan menjalankan manual"
-            );
-            reject();
-          }
-        });
+      return new Promise<void>(async (resolve, reject) => {
+        try {
+          await execPromise(command);
 
-        vscode.window.showInformationMessage(
-          "Template berhasil dibuat, selamat menggunakan✌️😊 "
-        );
-        resolve();
+          const pubspecYaml = path.join(userDirectory, "pubspec.yaml");
+
+          progress.report({ message: "Membersihkan default folder" });
+          await fs.remove(path.join(userDirectory, "lib")).catch(reject);
+
+          progress.report({ message: "Menyalin template" });
+          await fs.copy(templateDirectory, userDirectory).catch(reject);
+
+          progress.report({ message: "Menghapus pubspec.yaml" });
+          await fs.remove(pubspecYaml).catch(reject);
+
+          progress.report({
+            message: "Menyalin pubspec.yaml sesuai template",
+          });
+          await fs.writeFile(pubspecYaml, Writer.pubspecWriter(folderName)).catch(reject);
+
+          progress.report({ message: "Menjalankan Pubspec" });
+          await execPromise(`cd ${userDirectory} && flutter pub get`).catch(reject);
+
+          vscode.window.showInformationMessage(
+            "Template berhasil dibuat, selamat menggunakan✌️😊 "
+          );
+
+          resolve();
+        } catch (error) {
+          vscode.window.showErrorMessage(
+            `Operasi telah gagal karena sesuatu, silahkan mengulanginya | ${error}`
+          );
+          reject(error);
+        }
       });
     }
   );
