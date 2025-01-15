@@ -24,7 +24,7 @@ export function createTemplate() {
       }
 
       if (!extensionPath) {
-        vscode.window.showErrorMessage("Tidak ada extensi yang dituju");
+        vscode.window.showErrorMessage("No target extension specified");
         return;
       }
 
@@ -37,7 +37,7 @@ export function createTemplate() {
       );
 
       if (!pickPlatforms || pickPlatforms.length === 0) {
-        vscode.window.showErrorMessage("Pilih platform setidaknya 1");
+        vscode.window.showErrorMessage("Select at least one platform");
         return;
       }
 
@@ -45,11 +45,11 @@ export function createTemplate() {
         canSelectFolders: true,
         canSelectFiles: false,
         canSelectMany: false,
-        openLabel: "Pilih Folder Sumber",
+        openLabel: "Select Source Folder",
       });
 
       if (!sourceUri) {
-        vscode.window.showErrorMessage("Tidak ada folder yang terbuka.");
+        vscode.window.showErrorMessage("No folder is open.");
         return;
       }
 
@@ -57,13 +57,15 @@ export function createTemplate() {
         const userDirectory = path.join(sourceUri[0].fsPath, folderName);
         const folderExist = await fs.pathExists(userDirectory);
         if (folderExist) {
-          vscode.window.showErrorMessage("Folder sudah ada, gunakan nama lain");
+          vscode.window.showErrorMessage(
+            "Folder already exists, please use a different name"
+          );
           return;
         }
         await fs.mkdir(userDirectory);
         runFlutterCommand(userDirectory, pickPlatforms, folderName);
       } catch (error) {
-        vscode.window.showInformationMessage(`Gagal membuat template`);
+        vscode.window.showInformationMessage(`Failed to create template`);
       }
     }
   );
@@ -81,7 +83,7 @@ function runFlutterCommand(
   vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: "Sedang mempersiapkan template😊",
+      title: "Preparing template😊",
       cancellable: false,
     },
     async (progress) => {
@@ -91,14 +93,14 @@ function runFlutterCommand(
 
           const pubspecYaml = path.join(userDirectory, "pubspec.yaml");
 
-          progress.report({ message: "Membersihkan default folder" });
+          progress.report({ message: "Cleaning default folder" });
           await fs.remove(path.join(userDirectory, "lib")).catch(reject);
 
-          progress.report({ message: "Menghapus pubspec.yaml" });
+          progress.report({ message: "Removing pubspec.yaml" });
           await fs.remove(pubspecYaml).catch(reject);
 
           progress.report({
-            message: "Menyalin pubspec.yaml sesuai template",
+            message: "Copying pubspec.yaml according to template",
           });
           await fs
             .writeFile(pubspecYaml, Writer.pubspecWriter(folderName))
@@ -271,7 +273,7 @@ function runFlutterCommand(
           await Promise.all(
             folderTasks.map(async (task) => {
               progress.report({
-                message: `Membuat folder template`,
+                message: `Creating template folder`,
               });
               await fs.ensureDir(task);
             })
@@ -280,25 +282,25 @@ function runFlutterCommand(
           await Promise.all(
             fileTasks.map(async (task) => {
               progress.report({
-                message: `Membuat file template`,
+                message: `Creating template file`,
               });
               await fs.outputFile(task["path"], task["writer"]);
             })
           );
 
-          progress.report({ message: "Menjalankan Pubspec" });
+          progress.report({ message: "Running Pubspec" });
           await execPromise(
             `cd ${userDirectory} && code . --reuse-window && flutter pub get --no-example`
           ).catch(reject);
 
           vscode.window.showInformationMessage(
-            "Template berhasil dibuat, selamat menggunakan✌️😊"
+            "Template successfully created, enjoy using it! ✌️😊"
           );
 
           resolve();
         } catch (error) {
           vscode.window.showErrorMessage(
-            `Operasi telah gagal karena sesuatu, silahkan mengulanginya | ${error}`
+            `"Operation failed due to an issue, please try again | ${error}`
           );
           reject(error);
         }

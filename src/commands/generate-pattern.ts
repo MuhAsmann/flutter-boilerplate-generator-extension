@@ -10,7 +10,7 @@ export function generatePattern() {
     async () => {
       const currentWorkspace = vscode.workspace.workspaceFolders;
       if (!currentWorkspace || currentWorkspace.length === 0) {
-        vscode.window.showErrorMessage("Tidak ada workspace yang terbuka");
+        vscode.window.showErrorMessage("No workspace is open");
         return;
       }
 
@@ -22,7 +22,7 @@ export function generatePattern() {
 
       const isModuleFolderExist = await fs.pathExists(modulePath);
       if (!isModuleFolderExist) {
-        vscode.window.showErrorMessage("Folder lib/modules tidak ditemukan ");
+        vscode.window.showErrorMessage("The lib/modules folder was not found");
         return;
       }
 
@@ -35,7 +35,7 @@ export function generatePattern() {
       );
       if (isModuleExist) {
         vscode.window.showErrorMessage(
-          `Folder ${folderName} sudah ada, silahkan menggunakan nama folder yang lain`
+          `The folder ${folderName} already exists, please use a different folder name`
         );
         return;
       }
@@ -43,7 +43,7 @@ export function generatePattern() {
       vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
-          title: "Sedang membuat pattern🥰",
+          title: "Creating pattern in progress🥰",
           cancellable: false,
         },
         (progress) => {
@@ -131,25 +131,25 @@ export function generatePattern() {
 
               await Promise.all(
                 folderPaths.map(async (folder) => {
-                  progress.report({ message: `Membuat folder ${folder}` });
+                  progress.report({ message: `Creating folder ${folder}` });
                   await fs.ensureDir(folder);
                 })
               );
 
               await Promise.all(
                 filePaths.map(async ({ path, writer }) => {
-                  progress.report({ message: `Membuat file ${path}` });
+                  progress.report({ message: `Creating file ${path}` });
                   await fs.outputFile(path, writer);
                 })
               );
 
               vscode.window.showInformationMessage(
-                `Pattern berhasil dibuat, enjoyyy🥰🥰🥰`
+                `Pattern successfully created, enjoy! 🥰🥰🥰`
               );
               resolve();
             } catch (error) {
               vscode.window.showErrorMessage(
-                `Operasi telah gagal karena sesuatu, silahkan mengulanginya | ${error}`
+                `Operation failed due to an issue, please try again | ${error}`
               );
               reject();
             }

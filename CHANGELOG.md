@@ -1,9 +1,14 @@
-# Change Log
+# Changelog
 
-All notable changes to the "flutter-generator-boilerplate" extension will be documented in this file.
+## [0.1.0]
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+- Enhanced template creation process.
 
-## [Unreleased]
+## [0.0.2]
 
-- Initial release
+- Fixed extension behavior when running on macOS. [MuhAsmann](https://github.com/MuhAsmann)
+- Added command to generate pattern.
+
+## [0.0.1]
+
+- Added command to create template.

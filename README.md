@@ -1,53 +1,52 @@
 # Flutter Generator Boilerplate
 
-Ekstensi Visual Studio Code untuk membuat template boilerplate Flutter dengan cepat dan mudah.
+A Visual Studio Code extension for quickly generating Flutter boilerplate templates.
 
-## 📋 Fitur
+## 📋 Features
 
-- Membuat folder dan struktur proyek Flutter secara otomatis.
-- Memilih platform target saat membuat proyek baru.
-- Menggunakan template khusus yang dapat disesuaikan.
+- Automatically creates Flutter project folders and structure.
+- Allows target platform selection during project creation.
+- Supports customizable templates.
 
-## 🚀 Cara Menggunakan Ekstensi
+## 🚀 How to Use
 
-1. **Instalasi**  
-   Pastikan Anda sudah menginstal Flutter SDK dan menambahkan `flutter` ke dalam variabel lingkungan PATH komputer Anda.
+1. **Installation**
+   Ensure Flutter SDK is installed and added to your system's PATH.
 
-2. **Langkah-Langkah Menjalankan Ekstensi:**
-   1. Buka Visual Studio Code.
-   2. Tekan `Ctrl + Shift + P` atau `Cmd + Shift + P` (macOS) untuk membuka Command Palette.
-   3. Ketik dan pilih:
-      ```
-      Flutter Generator Boilerplate : Create Template
-      ```
-   4. Masukkan direktori tujuan proyek Flutter yang ingin dibuat.
-   5. Pilih platform yang ingin digunakan (misalnya: `android`, `ios`, `web`, dll).
-   6. Tunggu hingga proses pembuatan selesai.
-3. **Hasil**  
-   Ekstensi akan:
-   - Membuat struktur folder Flutter di direktori yang dipilih.
-   - Menggunakan template khusus yang telah disediakan.
+2. **Steps to Run:**
+   1. Open Visual Studio Code.
+   2. Press `Ctrl + Shift + P` or `Cmd + Shift + P` (macOS) to open Command Palette.
+   3. Type and select:
+   ```
+   Flutter Generator Boilerplate : Create Template
+   ```
+   4. Enter the target directory for your Flutter project.
+   5. Select the desired platform (`android`, `ios`, `web`, etc.).
+   6. Wait for project creation to complete.
 
-## 🛠 Persyaratan Sistem
+## 🛠 System Requirements
 
-- **Flutter SDK:** Pastikan versi terbaru Flutter sudah terinstal. [Panduan Instalasi Flutter](https://flutter.dev/docs/get-started/install)
-- **Visual Studio Code:** Ekstensi ini memerlukan editor Visual Studio Code.
-- **Dukungan Platform:** Ekstensi mendukung Android, iOS, Web, Windows, Linux, dan macOS.
+- **Flutter SDK:** Latest version recommended. [Flutter Installation Guide](https://flutter.dev/docs/get-started/install)
+- **Visual Studio Code:** Required editor for this extension.
+- **Platform Support:** Android, iOS, Web, Windows, Linux, and macOS.
 
-## 🧰 Pengembangan dan Kontribusi
+## 🧰 Development & Contribution
 
-Jika Anda ingin berkontribusi atau melaporkan masalah:
+1. Fork this repository.
+2. Create a feature branch: `git checkout -b fitur-baru`.
+3. Commit your changes: `git commit -m "Tambahkan fitur baru"`.
+4. Push your branch: `git push origin fitur-baru`.
+5. Create a Pull Request.
 
-1. Fork proyek ini.
-2. Buat branch fitur: `git checkout -b fitur-baru`.
-3. Commit perubahan: `git commit -m "Tambahkan fitur baru"`.
-4. Push ke branch: `git push origin fitur-baru`.
-5. Buat Pull Request.
+Have any issue? [Report in here](https://github.com/elskyseen/flutter-boilerplate-generator-extension/issues)
+
+## 👜 Changelog
+View all changes [View](CHANGELOG.md)
 
 ## 📄 Lisensi
 
-Proyek ini dilisensikan di bawah [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-Selamat membuat proyek Flutter yang luar biasa!
+Happy coding and building amazing Flutter projects! 🎉
